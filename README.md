@@ -1,6 +1,8 @@
-# Multimodal Inference Profiler
+# Multimodal Inference Profiler · MedGemma Example
 
 A small profiling toolkit for inspecting single-request vision-language inference: time to first token, the decode interval, standalone image-encoder latency, and peak allocated CUDA memory.
+
+Includes a named **MedGemma 4B profiling preset** and a [step-by-step MedGemma guide](docs/medgemma.md). The model is provided by Google; this repository contains the profiling software, synthetic input fixtures, and reporting tools.
 
 **Python CLI · Optional PyTorch / Transformers adapter · CSV + JSON + HTML reports · Offline demo**
 
@@ -54,13 +56,13 @@ For a cached compatible model:
 
 ```bash
 python3 run.py profile \
-  --model google/medgemma-4b-it \
+  --preset medgemma-4b \
   --manifest examples/images.json \
   --warmup 1 --repeats 4 --max-new-tokens 16 \
   --out outputs/local-profile
 ```
 
-Use `--revision COMMIT_ID` for a pinned model revision. Model and processor loading are local-only unless you explicitly pass `--allow-download`. The runner uses CUDA device 0 and does not implement multi-GPU dispatch.
+The preset selects `google/medgemma-4b-it`. You can instead use `--model MODEL_ID` for a compatible model or local model directory. Use `--revision COMMIT_ID` for a pinned model revision. Model and processor loading are local-only unless you explicitly pass `--allow-download`. The runner uses CUDA device 0 and does not implement multi-GPU dispatch.
 
 The example manifest references locally generated colored-shape images. Add local image paths and prompts to a separate manifest for other workloads. Neither prompts, input paths, generated text, nor image contents are written to reports; sample IDs and workload labels are written, so use non-sensitive labels.
 
@@ -85,6 +87,7 @@ See [measurement notes](docs/measurement.md) for assumptions and limitations.
 src/mmprof/
   timing.py          # Library-independent token callback accounting
   compatibility.py   # Signature-aware function invocation
+  presets.py         # Named MedGemma model identifier
   gpu_primitives.py  # CUDA-event timing helper
   cuda_backend.py    # Optional model/processor adapter
   reporting.py       # Row validation, summaries, CSV/JSON/HTML output
@@ -99,7 +102,7 @@ tests/              # Offline tests and optional mocked adapter contracts
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 ```
 
-There are 11 standard-library tests and 2 optional adapter-contract tests. The latter run with the runtime libraries installed and mock CUDA/model operations; they do not download weights or measure a GPU. The offline tests verify prompt exclusion, timestamp consistency, one-token behavior, invalid data rejection, report round trips, output preservation, and HTML escaping.
+There are 12 standard-library tests and 2 optional adapter-contract tests. The latter run with the runtime libraries installed and mock CUDA/model operations; they do not download weights or measure a GPU. The offline tests verify MedGemma preset routing and metadata, prompt exclusion, timestamp consistency, one-token behavior, invalid data rejection, report round trips, output preservation, and HTML escaping.
 
 A [CI template](ci/github-actions.yml.example) runs the lightweight suite on Python 3.10 and 3.12. It is a template rather than an active workflow because the current publishing credentials do not include workflow-write permission.
 

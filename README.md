@@ -8,6 +8,19 @@ Includes a named **MedGemma 4B profiling preset** and a [step-by-step MedGemma g
 
 Adapted from existing local multimodal profiling utilities into a standalone package. General timing helpers are retained; request handling, validation, reporting, and tests are organized for independent use. No research-specific optimization methods or experimental findings are included.
 
+## For software and data engineering reviewers
+
+The quickest walkthrough is `demo` → raw CSV → grouped JSON → HTML report. It demonstrates a Python CLI, validated data processing, descriptive statistics, reproducible output files, and separation between a lightweight reporting core and an optional third-party model adapter.
+
+| Area | Implementation evidence |
+| --- | --- |
+| Python / software design | [CLI orchestration](src/mmprof/cli.py), small modules, optional dependencies, installable package and console command. |
+| Data analytics / reporting | [Validation and summaries](src/mmprof/reporting.py), per-workload medians/IQRs, retained raw rows, CSV/JSON/HTML exports. |
+| Systems integration | [Hugging Face/PyTorch adapter](src/mmprof/cuda_backend.py), cached-only loading, revision metadata, and [MedGemma preset](src/mmprof/presets.py). |
+| Reliability | [Offline tests](tests/test_toolkit.py) and [mocked adapter contracts](tests/test_cuda_contract.py), explicit measurement boundaries, and protection against overwriting runs. |
+
+This is a local instrumentation and reporting tool. It does not implement a REST service, SQL database, authentication, longitudinal patient-data processing, or cloud deployment. Third-party model-library integration here is separate from SaaS integrations such as Zoom or device-data platforms. The CI configuration is a template, not evidence of an active deployment pipeline.
+
 ## Try it without a GPU
 
 From the repository root:

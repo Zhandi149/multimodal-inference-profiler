@@ -3,8 +3,9 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import types
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from mmprof.cli import demo_rows, load_manifest, main, read_csv
 from mmprof.compatibility import call_with_supported_kwargs
@@ -99,6 +100,29 @@ class ReportTests(unittest.TestCase):
 
 
 class CliTests(unittest.TestCase):
+    def test_medgemma_preset_routes_model_and_records_metadata(self):
+        adapter = types.ModuleType("mmprof.cuda_backend")
+        backend = Mock()
+        backend.metadata = {"synthetic": False, "requested_model": "google/medgemma-4b-it",
+                            "measurement": "mocked adapter contract test"}
+        backend.measure.return_value = {k: v for k, v in demo_rows()[0].items()
+                                        if k not in ("workload", "sample_id", "repeat", "image_count")}
+        adapter.CudaProfiler = Mock(return_value=backend)
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "image.ppm").write_text("P3\n1 1\n255\n255 0 0\n")
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps([{"id": "sample", "workload": "test",
+                                            "images": ["image.ppm"], "prompt": "Describe colors"}]))
+            with patch.dict(sys.modules, {"mmprof.cuda_backend": adapter}):
+                main(["profile", "--preset", "medgemma-4b", "--revision", "fixture-revision",
+                      "--manifest", str(manifest), "--out", str(root / "run"),
+                      "--repeats", "1", "--warmup", "0"])
+            adapter.CudaProfiler.assert_called_once_with("google/medgemma-4b-it", "fixture-revision", False)
+            metadata = json.loads((root / "run/summary.json").read_text())["metadata"]
+            self.assertEqual(metadata["preset"], "medgemma-4b")
+            self.assertEqual(backend.measure.call_count, 1)
+
     def test_offline_mode_does_not_import_gpu_libraries(self):
         code = "import sys; import mmprof.cli; assert 'torch' not in sys.modules; assert 'transformers' not in sys.modules"
         subprocess.run([sys.executable, "-c", code], check=True)

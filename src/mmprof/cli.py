@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 from .reporting import write_report, validate
+from .presets import MODEL_PRESETS
 
 
 def demo_rows():
@@ -72,7 +73,9 @@ def main(argv=None):
     report.add_argument("--input", type=Path, required=True)
     report.add_argument("--out", type=Path, required=True)
     profile = commands.add_parser("profile", help="measure a cached compatible model on CUDA device 0")
-    profile.add_argument("--model", required=True)
+    model_choice = profile.add_mutually_exclusive_group(required=True)
+    model_choice.add_argument("--model", help="compatible model ID or local model directory")
+    model_choice.add_argument("--preset", choices=sorted(MODEL_PRESETS), help="named model configuration")
     profile.add_argument("--revision")
     profile.add_argument("--manifest", type=Path, required=True)
     profile.add_argument("--out", type=Path, required=True)
@@ -98,10 +101,13 @@ def main(argv=None):
                 from .cuda_backend import CudaProfiler
             except ImportError as exc:
                 raise RuntimeError("install the gpu optional dependencies to run live profiling") from exc
-            backend = CudaProfiler(args.model, args.revision, args.allow_download)
+            model_id = MODEL_PRESETS[args.preset] if args.preset else args.model
+            backend = CudaProfiler(model_id, args.revision, args.allow_download)
             rows, metadata = [], dict(backend.metadata)
             metadata.update(warmup=args.warmup, repeats=args.repeats,
                             max_new_tokens=args.max_new_tokens)
+            if args.preset:
+                metadata["preset"] = args.preset
             for sample in samples:
                 inputs = backend.prepare(sample["image_paths"], sample["prompt"])
                 for _ in range(args.warmup):

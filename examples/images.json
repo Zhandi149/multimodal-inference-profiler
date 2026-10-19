@@ -1,0 +1,4 @@
+[
+  {"id":"synthetic-one","workload":"colored_shapes","images":["shapes.ppm"],"prompt":"Describe the colors and geometric arrangement briefly."},
+  {"id":"synthetic-two","workload":"colored_shapes","images":["shapes.ppm","shapes.ppm"],"prompt":"Compare the colors and shapes in these two synthetic images briefly."}
+]

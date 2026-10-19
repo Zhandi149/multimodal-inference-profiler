@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "synthetic": true,
+    "model": "none",
+    "description": "Invented timings for testing report generation; not hardware measurements",
+    "report_created_utc": "2026-10-19T17:10:36.792594+00:00"
+  },
+  "groups": {
+    "fictional_shapes / images=1": {
+      "workload": "fictional_shapes",
+      "image_count": 1,
+      "n": 4,
+      "encoder_ms": {
+        "median": 13.5,
+        "iqr": 1.5,
+        "n": 4
+      },
+      "ttft_ms": {
+        "median": 21.5,
+        "iqr": 1.5,
+        "n": 4
+      },
+      "decode_ms": {
+        "median": 13.5,
+        "iqr": 1.5,
+        "n": 4
+      },
+      "total_ms": {
+        "median": 36.0,
+        "iqr": 3.0,
+        "n": 4
+      },
+      "decode_per_token_ms": {
+        "median": 4.5,
+        "iqr": 0.5,
+        "n": 4
+      },
+      "peak_allocated_gib": {
+        "median": 1.1,
+        "iqr": 0.0,
+        "n": 4
+      }
+    },
+    "fictional_shapes / images=2": {
+      "workload": "fictional_shapes",
+      "image_count": 2,
+      "n": 4,
+      "encoder_ms": {
+        "median": 25.5,
+        "iqr": 1.5,
+        "n": 4
+      },
+      "ttft_ms": {
+        "median": 41.5,
+        "iqr": 1.5,
+        "n": 4
+      },
+      "decode_ms": {
+        "median": 13.5,
+        "iqr": 1.5,
+        "n": 4
+      },
+      "total_ms": {
+        "median": 56.0,
+        "iqr": 3.0,
+        "n": 4
+      },
+      "decode_per_token_ms": {
+        "median": 4.5,
+        "iqr": 0.5,
+        "n": 4
+      },
+      "peak_allocated_gib": {
+        "median": 1.2,
+        "iqr": 0.0,
+        "n": 4
+      }
+    }
+  }
+}

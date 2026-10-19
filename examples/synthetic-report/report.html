@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Inference profile</title>
+<style>body{font:16px/1.6 system-ui;margin:40px auto;padding:0 24px;max-width:1200px;color:#173435;background:#f4f7f3}h1{line-height:1.2}.label{background:#e0eae1;padding:14px;border-left:4px solid #226552}table{border-collapse:collapse;background:white;font-size:13px;width:100%}td,th{padding:12px;text-align:left;border-bottom:1px solid #d6dfd7}pre{white-space:pre-wrap;font-size:12px}.scroll{overflow-x:auto}</style>
+<h1>Multimodal inference profile</h1><p class="label">SYNTHETIC DEMO — NOT MEASURED PERFORMANCE</p><p>Median values per workload and image count. Times are milliseconds; memory is GiB. These instrumented measurements include synchronization overhead.</p><div class="scroll"><table><tr><th>Workload / image count</th><th>n</th><th>encoder_ms</th><th>ttft_ms</th><th>decode_ms</th><th>total_ms</th><th>decode_per_token_ms</th><th>peak_allocated_gib</th></tr><tr><td>fictional_shapes / images=1</td><td>4</td><td>13.500</td><td>21.500</td><td>13.500</td><td>36.000</td><td>4.500</td><td>1.100</td></tr><tr><td>fictional_shapes / images=2</td><td>4</td><td>25.500</td><td>41.500</td><td>13.500</td><td>56.000</td><td>4.500</td><td>1.200</td></tr></table></div><p>Encoder latency is a separate call; it is not a disjoint part of the generation timer. IQR and counts are available in summary.json. Per-token decode latency is unavailable for one-token outputs.</p><h2>Run metadata</h2><pre>{
+  &quot;synthetic&quot;: true,
+  &quot;model&quot;: &quot;none&quot;,
+  &quot;description&quot;: &quot;Invented timings for testing report generation; not hardware measurements&quot;,
+  &quot;report_created_utc&quot;: &quot;2026-10-19T17:10:36.792594+00:00&quot;
+}</pre></html>
